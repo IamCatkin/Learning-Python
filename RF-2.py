@@ -57,7 +57,7 @@ while seq < 23:
         plt.xlim(0,1.0)
         plt.ylim(0,1.05)
         plt.legend(loc=4)#图例的位置
-        #plt.show()
+        plt.show()
 
 ########## 需要的数据 ##########
         print('The auc is: %.3f' %auc)

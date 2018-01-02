@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
-import numpy as np
+
 seq =1
 path =r"D:\python\results\\"
 while seq < 23:

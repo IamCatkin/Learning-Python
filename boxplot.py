@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt  
-from matplotlib.backends.backend_pdf import PdfPages
 
 #添加成绩表
 plt.style.use("classic")
@@ -14,8 +12,8 @@ df=pd.DataFrame()
 seq = 1
 while seq < 23:
     path =r"D:\python\results\\"
-    data = pd.read_table(path+str(seq)+'.csv',delimiter=',')
-    df[str(seq)]=data.iloc[:,[0]]
+    data = pd.read_table(path+str(seq)+'_sorted.csv',delimiter=',')
+    df[str(seq)]=data.iloc[:,[3]]
     seq += 1
 
 #用matplotlib来画出箱型图
@@ -25,11 +23,11 @@ plt.boxplot(x=df.values,
             boxprops = {'color':'black','facecolor':'#9999ff'},
             labels=df.columns,
             whis=1.5)
-plt.title('The Accuracy boxplot')
-plt.ylabel('Accuracy')
+plt.title('The auc boxplot')
+plt.ylabel('auc')
 plt.xlabel('Hepatotoxicity class')
 plt.show()
 
 #保存图片
-acc.savefig(".\\results\\acc.pdf", bbox_inches='tight')
+acc.savefig(".\\results\\auc.pdf", bbox_inches='tight')
                        
