@@ -5,6 +5,7 @@ from sklearn.model_selection import train_test_split
 from sklearn import metrics
 import matplotlib.pyplot as plt  
 
+
 seq = 1
 while seq < 23:
     cycle = 0
@@ -12,7 +13,7 @@ while seq < 23:
     with open(filename,'a+') as f:
         f.write('ACC'+','+'SPE'+','+'SEN'+','+'AUC'+'\n')
         f.close()
-    while cycle < 20:
+    while cycle < 50:
 #########   读取文件   ############
         path =r"D:\python\txt\\"
         data = pd.read_table(path+str(seq)+'.txt',delimiter='\t')
@@ -27,7 +28,7 @@ while seq < 23:
         positive_label = int(complain.iloc[0,0])
 
 #########  划分训练集与测试集 #########
-        X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2)
+        X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.3)
 
 #########   使用随机森林算法进行预测 ########
         rf = RandomForestClassifier(n_estimators=500).fit(X_train,y_train)
@@ -56,7 +57,7 @@ while seq < 23:
         plt.xlim(0,1.0)
         plt.ylim(0,1.05)
         plt.legend(loc=4)#图例的位置
-        plt.show()
+        #plt.show()
 
 ########## 需要的数据 ##########
         print('The auc is: %.3f' %auc)
