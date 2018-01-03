@@ -11,7 +11,7 @@ with open('results/1.csv','a+') as f:
     f.close()
 while cycle < 20:
 #########   读取文件   ############
-    path =r"D:\python\txt\1.txt"
+    path = r"D:\python\txt\1.txt"
     data = pd.read_table(path,delimiter='\t')
     positive = data.iloc[0:len(data.index),3:len(data.columns)]
     path_0 = r'D:\python\txt\label0.txt'
@@ -32,7 +32,7 @@ while cycle < 20:
 #########   评价结果　　　#################
     y_score = rf.predict_proba(X_test)[:,1]
     fpr,tpr,thresholds = metrics.roc_curve(y_test,y_score,pos_label=1)
-    confusion=metrics.confusion_matrix(y_test,answer_rf)
+    confusion = metrics.confusion_matrix(y_test,answer_rf)
     TP = confusion[1, 1]
     TN = confusion[0, 0]
     FP = confusion[0, 1]
@@ -42,7 +42,6 @@ while cycle < 20:
     sensitivity = TP / (TP+FN)
     specificity = TN / (TN+FP)
     #print(metrics.classification_report(y_test, answer_rf)) #生成评价报告
-
 
 ############ 绘制ROC曲线 ############
     plt.plot([0, 1], [0, 1], '--', color=(0.6, 0.6, 0.6), label='Luck')
@@ -55,10 +54,10 @@ while cycle < 20:
     plt.show()
 
 ########## 需要的数据 ##########
-    print('The auc is: %.3f' %auc)
     print('The accuracy is: %.3f' %accuracy)
-    print('The sensitivity is: %.3f' %sensitivity)
     print('The specificity is: %.3f' %specificity)
+    print('The sensitivity is: %.3f' %sensitivity)
+    print('The auc is: %.3f' %auc)
 
 ########## 存数据   ##############
     with open('results/1.csv','a+') as f:
