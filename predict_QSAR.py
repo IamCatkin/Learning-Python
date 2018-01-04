@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
 import pandas as pd
-from sklearn.preprocessing import Imputer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split 
 
@@ -39,10 +38,7 @@ for file in files:
     pre_data = pre_data_0.iloc[:,1:len(pre_data_0.columns)]
 
 ######## 使用中位值补全缺失值，然后将数据补全  #############
-    imp = Imputer(missing_values='NaN',strategy='median',axis=0)
-    imp.fit(X)
-    X0 = imp.transform(X)     
-    X = pd.DataFrame(X0,index=X.index,columns=X.columns)   # 从ndarray转回DataFrame
+    X.fillna(value=X.median(),inplace=True)   #加inplace=True直接替换
 
 ##########  划分训练集与测试集 #########
     X_train,X_,y_train,y_ = train_test_split(X,y,test_size=0.0)
