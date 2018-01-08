@@ -5,6 +5,7 @@
 # @File    : predict.py
 import os
 import pandas as pd
+from openpyxl import Workbook
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split 
 
@@ -24,10 +25,11 @@ for s in series:
         for file in files:
             cycle = 0
             filename = ".\\results\\"+s+"\\"+file[:-4]
-            with open(filename+".csv",'a+') as f1:
-                f1.write("Pre"+','+"pos_chance"+'\n')
-                f1.close()
-            while cycle < 1:
+            wb1 = Workbook()
+            sheet1 = wb1.active
+            while cycle < 20:
+                r1 = 2 * cycle + 2
+                r2 = r1 + 1
                 data = pd.read_table(path+s+"\\"+file,delimiter='\t')
                 positive = data.iloc[0:len(data.index),3:len(data.columns)]
                 data_0 = pd.read_table(path+s+"\\"+"hepdata0_1038_2d.txt",delimiter='\t')
@@ -52,11 +54,17 @@ for s in series:
                 chance = rf.predict_proba(pre_data)[:,1]
 
 ########## 存数据   ##############
-                with open(filename+".csv",'a+') as f1:
-                    for r,c in zip(answer_rf,chance):
-                        f1.write(str(r)+','+str(c)+"\n")
-                    f1.close()
+                j = 2
+                sheet1.cell(row=1,column=1).value = "SMILES"
+                sheet1.cell(row=1,column=r1).value = "Pre"
+                sheet1.cell(row=1,column=r2).value = "pos_chance"
+                for r,c in zip(answer_rf,chance):
+                    sheet1.cell(row=j,column=1).value = pre_data_0.iloc[j-2,1]
+                    sheet1.cell(row=j,column=r1).value = r
+                    sheet1.cell(row=j,column=r2).value = c
+                    j += 1
                 cycle += 1
+            wb1.save(filename+".xlsx")
                 
 #########   读取文件系列2   ############
     elif s == "series2":
@@ -69,10 +77,11 @@ for s in series:
         for file in files:
             cycle = 0
             filename = ".\\results\\"+s+"\\"+file[:-4]
-            with open(filename+".csv",'a+') as f2:
-                f2.write("Pre"+','+"pos_chance"+'\n')
-                f2.close()
-            while cycle < 1:
+            wb2 = Workbook()
+            sheet2 = wb2.active
+            while cycle < 20:
+                r1 = 2 * cycle + 2
+                r2 = r1 + 1
                 data = pd.read_table(path+s+"\\"+file,delimiter='\t')
                 positive = data.iloc[0:len(data.index),3:len(data.columns)]
                 data_0 = pd.read_table(path+s+"\\"+"hepdata0_1038_2d.txt",delimiter='\t')
@@ -97,21 +106,28 @@ for s in series:
                 chance = rf.predict_proba(pre_data)[:,1]
 
 ########## 存数据   ##############
-                with open(filename+".csv",'a+') as f2:
-                    for r,c in zip(answer_rf,chance):
-                        f2.write(str(r)+','+str(c)+"\n")
-                    f2.close()
+                j = 2
+                sheet2.cell(row=1,column=1).value = "SMILES"
+                sheet2.cell(row=1,column=r1).value = "Pre"
+                sheet2.cell(row=1,column=r2).value = "pos_chance"
+                for r,c in zip(answer_rf,chance):
+                    sheet2.cell(row=j,column=1).value = pre_data_0.iloc[j-2,1]
+                    sheet2.cell(row=j,column=r1).value = r
+                    sheet2.cell(row=j,column=r2).value = c
+                    j += 1
                 cycle += 1
+            wb2.save(filename+".xlsx")
                 
 #########   读取文件系列3   ############
     elif s == "all data":
         cycle = 0
         file = "all_data.txt"
         filename = filename = ".\\results\\"+s+"\\"+"all_data"
-        with open(filename+".csv",'a+') as f3:
-                f3.write("Pre"+','+"pos_chance"+'\n')
-                f3.close()
-        while cycle < 1:       
+        wb3 = Workbook()
+        sheet3 = wb3.active
+        while cycle < 20:
+            r1 = 2 * cycle + 2
+            r2 = r1 + 1
             data = pd.read_table(path+s+"\\"+file,delimiter='\t')
             X = data.iloc[:,4:len(data.columns)]
             y = data.iloc[:,3]
@@ -129,21 +145,28 @@ for s in series:
             chance = rf.predict_proba(pre_data)[:,1]
 
 ########## 存数据   ##############
-            with open(filename+".csv",'a+') as f3:
-                for r,c in zip(answer_rf,chance):
-                    f3.write(str(r)+','+str(c)+"\n")
-                f3.close()
-            cycle += 1       
+            j = 2
+            sheet3.cell(row=1,column=1).value = "SMILES"
+            sheet3.cell(row=1,column=r1).value = "Pre"
+            sheet3.cell(row=1,column=r2).value = "pos_chance"
+            for r,c in zip(answer_rf,chance):
+                sheet3.cell(row=j,column=1).value = pre_data_0.iloc[j-2,1]
+                sheet3.cell(row=j,column=r1).value = r
+                sheet3.cell(row=j,column=r2).value = c
+                j += 1
+            cycle += 1
+        wb3.save(filename+".xlsx")    
             
 #########   读取文件系列4   ############
     else:        
         cycle = 0
         file = "literdata_2d.txt"
         filename = filename = ".\\results\\"+s+"\\"+"literdata_2d"
-        with open(filename+".csv",'a+') as f4:
-                f4.write("Pre"+','+"pos_chance"+'\n')
-                f4.close()
-        while cycle < 1:       
+        wb4 = Workbook()
+        sheet4 = wb4.active
+        while cycle < 20:       
+            r1 = 2 * cycle + 2
+            r2 = r1 + 1
             data = pd.read_table(path+s+"\\"+file,delimiter='\t')
             X = data.iloc[:,4:len(data.columns)]
             y = data.iloc[:,3]
@@ -161,8 +184,14 @@ for s in series:
             chance = rf.predict_proba(pre_data)[:,1]
 
 ########## 存数据   ##############
-            with open(filename+".csv",'a+') as f4:
-                for r,c in zip(answer_rf,chance):
-                    f4.write(str(r)+','+str(c)+"\n")
-                f4.close()
-            cycle += 1               
+            j = 2
+            sheet4.cell(row=1,column=1).value = "SMILES"
+            sheet4.cell(row=1,column=r1).value = "Pre"
+            sheet4.cell(row=1,column=r2).value = "pos_chance"
+            for r,c in zip(answer_rf,chance):
+                sheet4.cell(row=j,column=1).value = pre_data_0.iloc[j-2,1]
+                sheet4.cell(row=j,column=r1).value = r
+                sheet4.cell(row=j,column=r2).value = c
+                j += 1
+            cycle += 1
+        wb4.save(filename+".xlsx")              
