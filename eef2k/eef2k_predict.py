@@ -4,7 +4,6 @@
 # @Author  : Catkin
 # @File    : predict.py
 import pandas as pd
-from openpyxl import Workbook
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split 
 
@@ -12,130 +11,40 @@ from sklearn.model_selection import train_test_split
 descriptor = ["cats","maccs","moe2d"]
 path = ".\\MODEL\\"
 path1 = ".\\TEST\\"
+cycles = 20
 
 #########   读取文件1   ############
 for d in descriptor:
-    if d == "cats":
-        cycle = 0
-        filename = ".\\results\\"+"eef2k_cats"
-        wb1 = Workbook()
-        sheet1 = wb1.active
-        while cycle < 20:
-            r1 = 2 * cycle + 2
-            r2 = r1 + 1
-            positive = pd.read_table(path+d+"\\eef2k_cats_positive.csv",delimiter=',')
-            negative = pd.read_table(path+d+"\\eef2k_cats_negative.csv",delimiter=',')
-            random_negative = negative.sample(n=len(positive.index))
-            complain = pd.concat([positive,random_negative])
-            X = complain.iloc[:,10:len(complain.columns)]
-            y = complain.iloc[:,0]
-            positive_label = int(complain.iloc[0,0])
-            pre_data_0 = pd.read_table(path1+'fda_1430_w-800_1357_wash_cats.csv',delimiter=',',na_values='NaN')
-            pre_data = pre_data_0.iloc[:,17:len(pre_data_0.columns)] 
-        
+    header = pd.DataFrame()
+    calculator = pd.DataFrame()
+    cycle = 0
+    filename = ".\\results\\"+"eef2k_"+d
+    while cycle < cycles:
+        positive = pd.read_table(path+d+"\\eef2k_"+d+"_positive.csv",delimiter=',')
+        negative = pd.read_table(path+d+"\\eef2k_"+d+"_negative.csv",delimiter=',')
+        random_negative = negative.sample(n=len(positive.index))
+        complain = pd.concat([positive,random_negative])
+        X = complain.iloc[:,10:len(complain.columns)]
+        y = complain.iloc[:,0]
+        positive_label = int(complain.iloc[0,0])
+        pre_data_0 = pd.read_table(path1+'fda_1430_w-800_1357_wash_'+d+'.csv',delimiter=',',na_values='NaN')
+        pre_data = pre_data_0.iloc[:,17:len(pre_data_0.columns)] 
+    
 #########  划分训练集与测试集 #########
-            X_train,X_,y_train,y_ = train_test_split(X,y,test_size=0.0)
+        X_train,X_,y_train,y_ = train_test_split(X,y,test_size=0.0)
 
 #########   使用随机森林算法进行预测 ########
-            rf = RandomForestClassifier(n_estimators=500).fit(X_train,y_train)
-            answer_rf = rf.predict(pre_data)
+        rf = RandomForestClassifier(n_estimators=500).fit(X_train,y_train)
+        answer_rf = rf.predict(pre_data)
 
 #########   评价结果　　　#################
-            chance = rf.predict_proba(pre_data)[:,1]
+        chance = rf.predict_proba(pre_data)[:,1]
 
 ########## 存数据   ##############
-            j = 2
-            sheet1.cell(row=1,column=1).value = "SMILES"
-            sheet1.cell(row=1,column=r1).value = "Pre"
-            sheet1.cell(row=1,column=r2).value = "pos_chance"
-            for r,c in zip(answer_rf,chance):
-                sheet1.cell(row=j,column=1).value = pre_data_0.iloc[j-2,1]
-                sheet1.cell(row=j,column=r1).value = r
-                sheet1.cell(row=j,column=r2).value = c
-                j += 1
-            cycle += 1
-        wb1.save(filename+".xlsx")
-                
-#########   读取文件系列2   ############
-    elif d == "maccs":
-        cycle = 0
-        filename = ".\\results\\"+"eef2k_maccs"
-        wb2 = Workbook()
-        sheet2 = wb2.active
-        while cycle < 20:
-            r1 = 2 * cycle + 2
-            r2 = r1 + 1
-            positive = pd.read_table(path+d+"\\eef2k_maccs_positive.csv",delimiter=',')
-            negative = pd.read_table(path+d+"\\eef2k_maccs_negative.csv",delimiter=',')
-            random_negative = negative.sample(n=len(positive.index))
-            complain = pd.concat([positive,random_negative])
-            X = complain.iloc[:,10:len(complain.columns)]
-            y = complain.iloc[:,0]
-            positive_label = int(complain.iloc[0,0])
-            pre_data_0 = pd.read_table(path1+'fda_1430_w-800_1357_wash_maccs.csv',delimiter=',',na_values='NaN')
-            pre_data = pre_data_0.iloc[:,17:len(pre_data_0.columns)] 
-        
-#########  划分训练集与测试集 #########
-            X_train,X_,y_train,y_ = train_test_split(X,y,test_size=0.0)
-
-#########   使用随机森林算法进行预测 ########
-            rf = RandomForestClassifier(n_estimators=500).fit(X_train,y_train)
-            answer_rf = rf.predict(pre_data)
-
-#########   评价结果　　　#################
-            chance = rf.predict_proba(pre_data)[:,1]
-
-########## 存数据   ##############
-            j = 2
-            sheet2.cell(row=1,column=1).value = "SMILES"
-            sheet2.cell(row=1,column=r1).value = "Pre"
-            sheet2.cell(row=1,column=r2).value = "pos_chance"
-            for r,c in zip(answer_rf,chance):
-                sheet2.cell(row=j,column=1).value = pre_data_0.iloc[j-2,1]
-                sheet2.cell(row=j,column=r1).value = r
-                sheet2.cell(row=j,column=r2).value = c
-                j += 1
-            cycle += 1
-        wb2.save(filename+".xlsx")
-                
-#########   读取文件系列3   ############
-    else:
-        cycle = 0
-        filename = ".\\results\\"+"eef2k_moe2d"
-        wb3 = Workbook()
-        sheet3 = wb3.active
-        while cycle < 20:
-            r1 = 2 * cycle + 2
-            r2 = r1 + 1
-            positive = pd.read_table(path+d+"\\eef2k_moe2d_positive.csv",delimiter=',')
-            negative = pd.read_table(path+d+"\\eef2k_moe2d_negative.csv",delimiter=',')
-            random_negative = negative.sample(n=len(positive.index))
-            complain = pd.concat([positive,random_negative])
-            X = complain.iloc[:,10:len(complain.columns)]
-            y = complain.iloc[:,0]
-            positive_label = int(complain.iloc[0,0])
-            pre_data_0 = pd.read_table(path1+'fda_1430_w-800_1357_wash_moe2d.csv',delimiter=',',na_values='NaN')
-            pre_data = pre_data_0.iloc[:,17:len(pre_data_0.columns)] 
-        
-#########  划分训练集与测试集 #########
-            X_train,X_,y_train,y_ = train_test_split(X,y,test_size=0.0)
-
-#########   使用随机森林算法进行预测 ########
-            rf = RandomForestClassifier(n_estimators=500).fit(X_train,y_train)
-            answer_rf = rf.predict(pre_data)
-
-#########   评价结果　　　#################
-            chance = rf.predict_proba(pre_data)[:,1]
-
-########## 存数据   ##############
-            j = 2
-            sheet3.cell(row=1,column=1).value = "SMILES"
-            sheet3.cell(row=1,column=r1).value = "Pre"
-            sheet3.cell(row=1,column=r2).value = "pos_chance"
-            for r,c in zip(answer_rf,chance):
-                sheet3.cell(row=j,column=1).value = pre_data_0.iloc[j-2,1]
-                sheet3.cell(row=j,column=r1).value = r
-                sheet3.cell(row=j,column=r2).value = c
-                j += 1
-            cycle += 1
-        wb3.save(filename+".xlsx")
+        header['id'] = pre_data_0['ID']
+        header['smiles'] = pre_data_0['mol']
+        calculator['chance-'+str(cycle+1)] = chance
+        cycle += 1
+    calculator['average'] = calculator.mean(axis=1)
+    results = pd.concat([header,calculator],axis=1)
+    results.to_csv(filename+'.csv',index=False)
