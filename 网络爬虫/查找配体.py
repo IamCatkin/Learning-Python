@@ -26,15 +26,16 @@ try:
                     print(liagands[j])
                     filename = ".\\ligand\\" + uniprot + '_' + str(pdb) + '_' + liagands[j] + '.sdf'
                     downloadlinks = "http://www.rcsb.org/pdb/download/downloadLigandFiles.do?ligandIdList=" + liagands[j] + "&structIdList=" + str(pdb) + "&instanceType=all&excludeUnobserved=false&includeHydrogens=false"
-                    socket.setdefaulttimeout(10.0)
+                    socket.setdefaulttimeout(50.0)
                     urlretrieve(downloadlinks, filename)
                     sheet.cell(row=i,column=4+j).value=liagands[j]
             else:
                 sheet.cell(row=i, column=4).value = 'Fault'
                 print('Fault')
         elif "No results were found" in page:
+            print('Error')
+            sheet.cell(row=i, column=4).value = 'Error'
             with open('error.txt','a+') as f:
-                print('Error')
                 f.write(str(i)+"\n")
                 f.close()
         elif "ligandPage" not in page:

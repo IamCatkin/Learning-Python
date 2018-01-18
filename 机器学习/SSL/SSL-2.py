@@ -4,9 +4,9 @@
 # @Author  : Catkin
 # @File    : SSL.py
 
-##############################
-#添加其他描叙符预测为正/负至模型
-##############################
+#################################################
+#添加其他描叙符预测为正/负且本描叙符预测相反的至模型
+###############################################
 
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
@@ -17,9 +17,9 @@ uni = "P35968"
 path = ".\\models\\"
 
 ######## 参数 #########
-cycles = 2
+cycles = 5
 label_rate = 0.05
-addition = 100
+addition = 50
 #######################
 
 def read(d):
@@ -74,11 +74,22 @@ def model(d,X_2,y_2,X_3,y_3,X_test,y_test):
     chance_que = X_3_copy.iloc[:,len(X_3_copy.columns)-1]
     return chance_que
 
-def getindex(c1,c2):
+def getindex(c,c1,c2):
+    positive = []
+    negative = []
     sorted_chance = pd.DataFrame()
     sorted_chance['average']=(c1+c2)/2
-    positive = sorted_chance.sort_values(['average'], ascending=False).head(addition)
-    negative = sorted_chance.sort_values(['average'], ascending=True).head(addition)
+    positive_0 = sorted_chance.sort_values(['average'], ascending=False)
+    negative_0 = sorted_chance.sort_values(['average'], ascending=True)
+    for p_index in positive_0.index:
+        if c.loc[p_index]<0.5:
+            positive.append(p_index)
+    positive=positive[:addition]
+    for n_index in negative_0.index:
+        if c.loc[n_index]>=0.5:
+            negative.append(n_index)
+    negative=negative[:addition]
+                
     return positive,negative
 
 def getdropindex(a,b,c,d,e,f):
@@ -92,10 +103,10 @@ def getdropindex(a,b,c,d,e,f):
 def update(data,X_2,y_2,X_3,y_3,added_positive,added_negative,droplist):
 
 ############### add ################
-    for p in added_positive.index:
+    for p in added_positive:
         X_2 = pd.concat([X_2,data.iloc[p:p+1,7:len(data.columns)-1]])
         y_2.loc[p] = 1
-    for n in cats_added_negative.index:
+    for n in cats_added_negative:
         X_2 = pd.concat([X_2,data.iloc[n:n+1,7:len(data.columns)-1]])
         y_2.loc[n] = 0
 ######################################
@@ -118,11 +129,11 @@ if __name__ == '__main__':
         maccs_chance = model("maccs",X_maccs,y_maccs,X_maccs_3,y_maccs_3,X_maccs_test,y_maccs_test)    
         moe2d_chance = model("moe2d",X_moe2d,y_moe2d,X_moe2d_3,y_moe2d_3,X_moe2d_test,y_moe2d_test)
         
-        cats_added_positive,cats_added_negative = getindex(maccs_chance,moe2d_chance)
-        maccs_added_positive,maccs_added_negative = getindex(cats_chance,moe2d_chance)
-        moe2d_added_positive,moe2d_added_negative = getindex(cats_chance,maccs_chance)
+        cats_added_positive,cats_added_negative = getindex(cats_chance,maccs_chance,moe2d_chance)
+        maccs_added_positive,maccs_added_negative = getindex(maccs_chance,cats_chance,moe2d_chance)
+        moe2d_added_positive,moe2d_added_negative = getindex(moe2d_chance,cats_chance,maccs_chance)
         
-        droplist = getdropindex(cats_added_positive.index,cats_added_negative.index,maccs_added_positive.index,maccs_added_negative.index,moe2d_added_positive.index,moe2d_added_negative.index)
+        droplist = getdropindex(cats_added_positive,cats_added_negative,maccs_added_positive,maccs_added_negative,moe2d_added_positive,moe2d_added_negative)
            
         X_cats,y_cats,X_cats_3,y_cats_3 = update(data_cats,X_cats,y_cats,X_cats_3,y_cats_3,cats_added_positive,cats_added_negative,droplist)
         X_maccs,y_maccs,X_maccs_3,y_maccs_3 = update(data_maccs,X_maccs,y_maccs,X_maccs_3,y_maccs_3,maccs_added_positive,maccs_added_negative,droplist)
