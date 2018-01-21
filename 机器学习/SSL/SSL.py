@@ -17,7 +17,7 @@ uni = "P35968"
 path = ".\\models\\"
 
 ######## 参数 #########
-cycles = 2
+cycles = 10
 label_rate = 0.05
 addition = 100
 #######################
@@ -32,9 +32,8 @@ def read(d):
             data.iloc[i,len(data.columns)-1]=0
     X_0 = data.iloc[:,7:len(data.columns)-1]
     y_0 = data.iloc[:,len(data.columns)-1]    
-    X_0,X_,y_0,y_ = train_test_split(X_0,y_0,test_size=0.0,random_state=3421)
-    X_1,X_test,y_1,y_test = train_test_split(X_0,y_0,test_size=0.2,random_state=1257)
-    X_2,X_3,y_2,y_3 = train_test_split(X_1,y_1,test_size=1-label_rate,random_state=11)
+    X_1,X_test,y_1,y_test = train_test_split(X_0,y_0,test_size=0.2,random_state=45)
+    X_2,X_3,y_2,y_3 = train_test_split(X_1,y_1,test_size=1-label_rate,random_state=76)
 
 ##############  整体预测与交互检验  ###########
 #    scores_all = cross_val_score(RandomForestClassifier(n_estimators=500), X_1, y_1, cv=5, scoring='accuracy')
@@ -44,11 +43,12 @@ def read(d):
 #    answer_rf_all = rf_all.predict(X_test)
 #    accuracy_all = metrics.accuracy_score(y_test,answer_rf_all)
 #    print(d+'整体预测:'+str(accuracy_all))
-################################################
+###############################################
     
     return data,X_2,y_2,X_3,y_3,X_test,y_test
 
 def model(d,X_2,y_2,X_3,y_3,X_test,y_test):
+    X_2,X_,y_2,y_ = train_test_split(X_2,y_2,test_size=0.0,random_state=None)
     X_3_copy = X_3.copy(deep=True)
     X_3_copy['chance']=0
     index = 0    
@@ -95,7 +95,7 @@ def update(data,X_2,y_2,X_3,y_3,added_positive,added_negative,droplist):
     for p in added_positive.index:
         X_2 = pd.concat([X_2,data.iloc[p:p+1,7:len(data.columns)-1]])
         y_2.loc[p] = 1
-    for n in cats_added_negative.index:
+    for n in added_negative.index:
         X_2 = pd.concat([X_2,data.iloc[n:n+1,7:len(data.columns)-1]])
         y_2.loc[n] = 0
 ######################################

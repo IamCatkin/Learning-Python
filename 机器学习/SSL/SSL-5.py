@@ -20,7 +20,7 @@ prediction = pd.DataFrame()
 prediction['rate']=None
 
 ######## 参数 #########
-cycles = 10
+cycles = 100
 label_rate = 0.05
 addition = 10
 #######################
@@ -35,18 +35,18 @@ def read(d):
             data.iloc[i,len(data.columns)-1]=0
     X_0 = data.iloc[:,7:len(data.columns)-1]
     y_0 = data.iloc[:,len(data.columns)-1]    
-    X_1,X_test,y_1,y_test = train_test_split(X_0,y_0,test_size=0.2,random_state=None)
-    X_2,X_3,y_2,y_3 = train_test_split(X_1,y_1,test_size=1-label_rate,random_state=None)
+    X_1,X_test,y_1,y_test = train_test_split(X_0,y_0,test_size=0.2,random_state=66)
+    X_2,X_3,y_2,y_3 = train_test_split(X_1,y_1,test_size=1-label_rate,random_state=55)
 
-##############  整体预测与交互检验  ###########
-#    scores_all = cross_val_score(RandomForestClassifier(n_estimators=500), X_1, y_1, cv=5, scoring='accuracy')
-#    score_all_mean =scores_all.mean()
-#    print(d+'整体5折交互检验:'+str(score_all_mean))
-#    rf_all = RandomForestClassifier(n_estimators=500).fit(X_1,y_1)
-#    answer_rf_all = rf_all.predict(X_test)
-#    accuracy_all = metrics.accuracy_score(y_test,answer_rf_all)
-#    print(d+'整体预测:'+str(accuracy_all))
-################################################
+#############  整体预测与交互检验  ###########
+    scores_all = cross_val_score(RandomForestClassifier(n_estimators=500), X_1, y_1, cv=5, scoring='accuracy')
+    score_all_mean =scores_all.mean()
+    print(d+'整体5折交互检验:'+str(score_all_mean))
+    rf_all = RandomForestClassifier(n_estimators=500).fit(X_1,y_1)
+    answer_rf_all = rf_all.predict(X_test)
+    accuracy_all = metrics.accuracy_score(y_test,answer_rf_all)
+    print(d+'整体预测:'+str(accuracy_all))
+###############################################
     
     return data,X_2,y_2,X_3,y_3,X_test,y_test
 
@@ -88,7 +88,7 @@ def update(data,X_2,y_2,X_3,y_3,added_positive,added_negative,droplist):
     for p in added_positive.index:
         X_2 = pd.concat([X_2,data.iloc[p:p+1,7:len(data.columns)-1]])
         y_2 = pd.concat([y_2,data.iloc[p:p+1,len(data.columns)-1]])
-    for n in cats_added_negative.index:
+    for n in added_negative.index:
         X_2 = pd.concat([X_2,data.iloc[n:n+1,7:len(data.columns)-1]])
         y_2 = pd.concat([y_2,data.iloc[n:n+1,len(data.columns)-1]])
 ######################################
