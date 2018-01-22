@@ -6,7 +6,7 @@
 import requests
 import re
 from requests.adapters import HTTPAdapter
-from requests.packages.urllib3.poolmanager import PoolManager
+from urllib3 import PoolManager
 import ssl
 from openpyxl import load_workbook
 from time import sleep
