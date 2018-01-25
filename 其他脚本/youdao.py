@@ -128,15 +128,15 @@ def printHtml(errorCode, query, translation, basic, web):
     if not webdict:
         webdict = item % '对不起,没有结果'
     #更多搜索
-    moreSearch = '<div class="item"><a href="http://dict.bing.com.cn/?FORM=BNGCN#' + \
+    moreSearch = '<div class="item"><a href="https://cn.bing.com/dict/search?q=' + \
       query + '">通过Bing词典搜索</a></div>'
-    moreSearch += '<div class="item"><a href="http://test.iciba.com/' + \
+    moreSearch += '<div class="item"><a href="http://www.iciba.com/' + \
       query + '">通过iciba词典搜索</a></div>'
     moreSearch += '<div class="item"><a href="http://www.baidu.com/s?wd=' + \
       query + '">通过百度搜索</a></div>'
-    global result
     result = html % (q, trans, key, webdict, moreSearch)
-    print(result)
+    utf8stdout = open(1, 'w', encoding='utf-8', closefd=False) # fd 1 is stdout
+    print(result, file=utf8stdout)
 
 def getData(string):
     data = json.loads(string)
