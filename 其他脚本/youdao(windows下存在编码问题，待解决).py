@@ -13,8 +13,8 @@ import random
 html = """
 <html>
 <head>
-    <meta charset="UTF-8">
-    <script type="text/javascript">function playSound(){var ky = document.getElementById("key");var word = ky.childNodes[0].nodeValue;var api = "http://dict.youdao.com/dictvoice?audio=" + encodeURIComponent(word);var ado = document.getElementById("media");try{ado.ended = true;ado.setAttribute("src",api);ado.load();ado.play();return false;}catch(err){alert(err.description);return false;}}</script>
+<meta charset="UTF-8">
+<script type="text/javascript">function playSound(){var ky = document.getElementById("key");var word = ky.childNodes[0].nodeValue;var api = "http://dict.youdao.com/dictvoice?audio=" + encodeURIComponent(word);var ado = document.getElementById("media");try{ado.ended = true;ado.setAttribute("src",api);ado.load();ado.play();return false;}catch(err){alert(err.description);return false;}}</script>
 </head>
 <body>
 <style type="text/css">
@@ -49,11 +49,11 @@ html = """
       </div>
       <div class="name"><i>有道翻译:</i></div>
       <div class="block">
-       %s
+    %s
       </div>
       <div class="name"><i>有道词典-基本词典:</i></div>
       <div class="block">
-       %s
+    %s
       </div>
       <div class="name"><i>有道词典-网络释义:</i></div>
       <div class="block">
@@ -154,8 +154,8 @@ def getData(string):
 
 
 #api信息
-appKey = '5a9833662c260806'
-secretKey = '3UX4QWD7UBKR0svNi1BQPxSO1SvvndTr'
+appKey = '你的应用ID'
+secretKey = '你的密钥'
 
 def searchWord(word):
     #加盐
@@ -170,13 +170,18 @@ def searchWord(word):
     m1.update(sign.encode('UTF-8'))
     sign = m1.hexdigest()
     myurl = myurl+'?appKey='+appKey+'&q='+urllib.request.quote(q)+'&from='+fromLang+'&to='+toLang+'&salt='+str(salt)+'&sign='+sign
-    httpClient = http.client.HTTPConnection('openapi.youdao.com')
-    httpClient.request('GET', myurl)
-    response = httpClient.getresponse()
-    k = response.read()
-    getData(k)
-    if httpClient:
-        httpClient.close()
-            
+    try:
+        httpClient = http.client.HTTPConnection('openapi.youdao.com')
+        httpClient.request('GET', myurl)
+     
+        #response是HTTPResponse对象
+        response = httpClient.getresponse()
+        k = response.read()
+        getData(k)
+    except Exception as e:
+        print(e)
+    finally:
+        if httpClient:
+            httpClient.close()
 if __name__ == '__main__':
     searchWord(sys.argv[1])
