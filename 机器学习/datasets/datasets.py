@@ -3,10 +3,39 @@
 # @Time    : 2017/1/24 12:10
 # @Author  : Catkin
 # @File    : datasets.py
+import sys
 import pandas as pd
 from sklearn import metrics
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split 
+
+#########  进度条实现  #######
+class ShowProcess():
+    i = 0 
+    max_steps = 0 
+    max_arrow = 50 
+
+    def __init__(self, max_steps):
+        self.max_steps = max_steps
+        self.i = 0
+
+    def show_process(self, i=None):
+        if i is not None:
+            self.i = i
+        else:
+            self.i += 1
+        num_arrow = int(self.i * self.max_arrow / self.max_steps) 
+        num_line = self.max_arrow - num_arrow 
+        percent = self.i * 100.0 / self.max_steps 
+        process_bar = '[' + '>' * num_arrow + '-' * num_line + ']'\
+                      + '%.2f' % percent + '%' + '\r' 
+        sys.stdout.write(process_bar) 
+        sys.stdout.flush()
+
+    def close(self, words='done'):
+        print('')
+        print(words)
+        self.i = 0
 
 #########   初始条件  ########
 descriptors = ["cats","maccs","moe2d"]
@@ -16,6 +45,8 @@ amount = 250
 content_all = pd.read_table("20170609chembl_bindingdb_sum.csv",delimiter=',')
 content_filter = content_all[content_all["total"]>=amount]
 unis = content_filter["uni"]
+max_steps = len(content_filter.index)
+process_bar = ShowProcess(max_steps)
 
 #########    读文件   ###############
 results = pd.DataFrame()
@@ -79,4 +110,6 @@ for uni in unis:
         single[descriptor+"_auc_mean"] = result.iloc[:,3].mean()
         single[descriptor+"_auc_var"] = result.iloc[:,3].var()
     results = pd.concat([results,single])
-results.to_csv('results.csv',index=False)
+    results.to_csv('results.csv',index=False)
+    process_bar.show_process()
+process_bar.close()
