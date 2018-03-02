@@ -9,6 +9,7 @@ import pandas as pd
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 import time
+import math
 
 def login():
     header = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/'
@@ -22,14 +23,16 @@ def login():
         print("Login successful!")
     else:
         print("Login error")
-        
+      
 def crawler(start, difference, maximum):
     try:
         result = pd.DataFrame()
         origin = "http://fraunhofer-repdose.de/repdose/"
         parameter1 = start
         parameter2 = parameter1 + difference
-        with tqdm(total=maximum-1) as pbar:              
+        if parameter2 > maximum:
+            parameter2 = maximum
+        with tqdm(total=math.ceil((maximum-start)/difference)) as pbar:              
             while parameter1 < maximum:
                 target = 'http://fraunhofer-repdose.de/repdose/query.php?cas_where=&cas_string=&cas_show=on&species=' \
                          '&species_show=on&organ=&organ_show=on&name=&name_show=on&s_sex=&ssex_show=on&effect=&effect_show=' \
@@ -58,12 +61,17 @@ def crawler(start, difference, maximum):
                     table = pd.read_html(page)[0]
                     table.drop([0,1], inplace=True)
                     result = pd.concat([result,table])
-                parameter1 += difference
+                parameter1 = parameter2
                 parameter2 += difference
-                time.sleep(0.2)
+                if parameter2 > maximum:
+                    parameter2 = maximum
+                time.sleep(0.5)
                 pbar.update(1)
     finally:
-        result.to_csv("result_"+str(maximum)+".csv",index=False,header=False)
+        get_c_name = pd.read_html(page)[0]
+        c_name = get_c_name.iloc[1,:]
+        result.rename(columns=c_name, inplace=True)
+        result.to_csv("result_"+str(maximum)+".csv",index=False)
 
 if __name__ == '__main__':
     start = input("Enter the min Mol. weight: ")
