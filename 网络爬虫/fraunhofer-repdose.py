@@ -71,7 +71,7 @@ def crawler(start, difference, maximum):
         get_c_name = pd.read_html(page)[0]
         c_name = get_c_name.iloc[1,:]
         result.rename(columns=c_name, inplace=True)
-        result.to_csv("result_"+str(maximum)+".csv",index=False)
+        result.to_csv("result_" + str(maximum) + ".csv", index=False)
 
 if __name__ == '__main__':
     start = input("Enter the min Mol. weight: ")
