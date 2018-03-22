@@ -6,5 +6,6 @@ index = []
 for item in lists:
     x = output_table[output_table["Uniprot_ID"]==item]
     p = x.iloc[:,5].argmax()
-    index.append(p)
+    if p == p:
+        index.append(p)
 output_table = output_table.loc[index]
