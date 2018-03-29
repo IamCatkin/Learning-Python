@@ -18,8 +18,9 @@ def getproteins():
     files = os.listdir(path)  
     names = set()
     for file in files:
-        name = file[0:file.rfind('-', 1)]
-        names.add(name)
+        if '.csv' in file:
+            name = file[0:file.rfind('-', 1)]
+            names.add(name)
     names = list(names)
     return names
 
