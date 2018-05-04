@@ -12,9 +12,13 @@ data = pd.read_excel('123.xlsx')
 for item in data['name']:
     url = 'http://www.selleck.cn/search.html?searchDTO.searchParam='+item+'&sp='+item
     page = requests.get(url).text
-    table = pd.read_html(page)[0]
-    name = table.iloc[1,2]
-    content = table.iloc[1,3]
+    if '请尝试用其他关键词搜索' not in page:
+        table = pd.read_html(page)[0]
+        name = table.iloc[1,2]
+        content = table.iloc[1,3]
+    else:
+        name = None
+        content = None
     names.append(name)
     contents.append(content)
 data['names'] = names
