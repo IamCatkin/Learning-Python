@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# @Time    : 2018/4/16 15:01
+# @Time    : 2018/5/17 16:01
 # @Author  : Catkin
 # @Website : blog.catkin.moe
 # @File    : 绘制roc曲线.py
@@ -35,7 +35,7 @@ def getdata(filenames):
 
 def makeroc(fprs,tprs,roc_aucs,filenames):
     f = plt.figure(figsize=(16, 12))
-    colors = sns.color_palette("husl", 8)
+    colors = sns.color_palette()
     for filename, color in zip(filenames, colors):
         plt.plot(fprs[filename], tprs[filename], color=color, lw=2,
                  label=filename+' AUC=%.2f' %roc_aucs[filename])
