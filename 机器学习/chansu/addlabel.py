@@ -32,7 +32,7 @@ def addlabel(filename):
                 data.iloc[i,len(data.columns)-1] = 1
             else:
                 data.iloc[i,len(data.columns)-1] = 0
-        data.to_csv(path+filename+'.csv',sep='\t',index=False)
+        data.to_csv(path+filename+'.tsv',sep='\t',index=False)
 
 def analysis():
     path = ".\\cats\\"
