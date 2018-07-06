@@ -39,10 +39,10 @@ def getarray(filename):
     return myarray
 
 def scatter(x,y,i,j,k):
-    plt.figure(figsize=(16, 9))
+    fig = plt.figure(figsize=(16, 9))
     plt.scatter(x, y)
 #    plt.show()
-    plt.savefig(j+'_'+k+'_'+str(i+1)+'.pdf')
+    fig.savefig(j+'_'+k+'_'+str(i+1)+'.pdf')
     plt.close()
 
 def gettri():
