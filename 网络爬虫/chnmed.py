@@ -5,6 +5,7 @@
 # @Website : blog.catkin.moe
 import time
 from tqdm import tqdm
+from retry import retry
 import pandas as pd
 from lxml import html
 from selenium import webdriver
@@ -14,15 +15,16 @@ def dataloader():
     cas = data['CAS']
     return data,cas
 
+@retry()
 def jscrawler(c):
     url = 'https://www.ncbi.nlm.nih.gov/pccompound?term=' + c    
     fireFoxOptions = webdriver.FirefoxOptions()
     fireFoxOptions.set_headless()
-    brower = webdriver.Firefox(firefox_options=fireFoxOptions)
-    brower.get(url)
+    browser = webdriver.Firefox(firefox_options=fireFoxOptions)
+    browser.get(url)
     time.sleep(10)
-    page = brower.page_source
-    brower.close()
+    page = browser.page_source
+    browser.close()
     tree = html.fromstring(page)
     cid_0 = tree.xpath('//*[@id="summary-app"]/div[1]/div[3]/div[1]/table/tbody/tr[1]/td')
     if cid_0:
@@ -50,20 +52,23 @@ def datacheker(cas):
             if pd.isnull(c) is not True:
                 cid,smile,name = jscrawler(c)
             else:
-                cid,smile,name = 'None','None','None'
+                cid,smile,name = 'Nocas','Nocas','Nocas'
             cids.append(cid)
             smiles.append(smile)
             names.append(name)
             pbar.update(1)
-    return cids,smiles,names
+    result = pd.DataFrame()
+    result['cids'] = cids
+    result['smiles'] = smiles
+    result['names'] = names
+    return result
     
 def main():
     data,cas = dataloader()
-    cas = cas[:5]
-    cids,smiles,names = datacheker(cas)
-    return data,cids,smiles,names
+    result = datacheker(cas)
+    return data,result
 
 if __name__ == '__main__':
-    data,cids,smiles,names = main()
+    data,result = main()
 
     
