@@ -22,7 +22,7 @@ def jscrawler(c):
     fireFoxOptions.set_headless()
     browser = webdriver.Firefox(firefox_options=fireFoxOptions)
     browser.get(url)
-    time.sleep(10)
+    time.sleep(5)
     page = browser.page_source
     browser.close()
     tree = html.fromstring(page)
@@ -34,6 +34,10 @@ def jscrawler(c):
     smile_0 = tree.xpath('//*[@id="Canonical-SMILES"]/div[2]/div[1]')
     if smile_0:
         smile = smile_0[0].text
+        if smile is None:
+            smile_1 = tree.xpath('//*[@id="Canonical-SMILES"]/div[2]/div[1]/span')
+            if smile_1:
+                smile = smile_1[0].text
     else:
         smile = 'None'
     name_0 = tree.xpath('//*[@id="summary-app"]/div[1]/div[2]/div/h1/span')
@@ -44,31 +48,25 @@ def jscrawler(c):
     return cid,smile,name
         
 def datacheker(cas):
-    cids = []
-    smiles = []
-    names = []
+    with open('result.csv','a+') as f:
+        f.write("cid"+','+"smile"+','+"name"+'\n')
+        f.close()
     with tqdm(total=len(cas)) as pbar:  
         for c in cas:
             if pd.isnull(c) is not True:
                 cid,smile,name = jscrawler(c)
             else:
                 cid,smile,name = 'Nocas','Nocas','Nocas'
-            cids.append(cid)
-            smiles.append(smile)
-            names.append(name)
+            with open('result.csv','a+') as f:
+                f.write(cid+','+smile+','+name+'\n')
+                f.close()
             pbar.update(1)
-    result = pd.DataFrame()
-    result['cids'] = cids
-    result['smiles'] = smiles
-    result['names'] = names
-    return result
     
 def main():
     data,cas = dataloader()
-    result = datacheker(cas)
-    return data,result
+    datacheker(cas)
 
 if __name__ == '__main__':
-    data,result = main()
+    main()
 
     
