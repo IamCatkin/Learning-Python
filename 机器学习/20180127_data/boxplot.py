@@ -3,7 +3,7 @@
 # @Time    : 2018/3/28 23:01
 # @Author  : Catkin
 # @Website : blog.catkin.moe
-# @File    : bloxplot.py
+# @File    : boxplot.py
 import os
 import pandas as pd
 import seaborn as sns
@@ -24,7 +24,7 @@ def getproteins():
     names = list(names)
     return names
 
-def getbloxplot_RF():
+def getboxplot_RF():
     for target in targets:
         df = pd.DataFrame()
         for descriptor in descriptors:
@@ -34,10 +34,10 @@ def getbloxplot_RF():
             plt.figure(figsize=(16, 9))
             sns.set_style("white")
             sns.boxplot(data=df)
-            plt.savefig('.\\bloxplot\\'+descriptor+'-'+target+'.pdf')
+            plt.savefig('.\\boxplot\\'+descriptor+'-'+target+'.pdf')
             plt.close()
 
-def getbloxplot_MLP():
+def getboxplot_MLP():
     for target in targets:
         df = pd.DataFrame()
         for protein in proteins:
@@ -46,10 +46,10 @@ def getbloxplot_MLP():
         plt.figure(figsize=(16, 9))
         sns.set_style("white")
         sns.boxplot(data=df)
-        plt.savefig('.\\bloxplot\\'+'MLP'+'-'+target+'.pdf')
+        plt.savefig('.\\boxplot\\'+'MLP'+'-'+target+'.pdf')
         plt.close()
 
-def getbloxplot_CNN():
+def getboxplot_CNN():
     for target in targets:
         df = pd.DataFrame()
         for protein in proteins:
@@ -58,11 +58,11 @@ def getbloxplot_CNN():
         plt.figure(figsize=(16, 9))
         sns.set_style("white")
         sns.boxplot(data=df)
-        plt.savefig('.\\bloxplot\\'+'CNN'+'-'+target+'.pdf')
+        plt.savefig('.\\boxplot\\'+'CNN'+'-'+target+'.pdf')
         plt.close()
 
 if __name__ == '__main__':
     proteins = getproteins()
-#    getbloxplot_RF()
-#    getbloxplot_MLP()
-#    getbloxplot_CNN()
+#    getboxplot_RF()
+#    getboxplot_MLP()
+#    getboxplot_CNN()
