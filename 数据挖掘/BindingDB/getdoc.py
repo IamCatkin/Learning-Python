@@ -1,10 +1,50 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# @Time    : 2018/4/23 19:40
+# @Time    : 2018/12/27 10:00
 # @Author  : Catkin
-# @Site    : blog.catkin.moe
-# @File    : 提取.py
+# @Website : blog.catkin.moe
+
+import pybel
 import pandas as  pd
+from rdkit import Chem
+from rdkit.Chem.Draw import IPythonConsole
+from rdkit.Chem.Scaffolds import MurckoScaffold
+
+def smiToSmile(smi):
+    mol = pybel.readstring("smi", smi)
+    smile = mol.write('can')
+    smile = smile.replace('\t\n', '')
+    return smile
+
+def addCan(data):
+    can = []
+    for smile in data['smi']:
+        if smile == 'O=BOB(OB(OB=O)[O-])[O-]':
+            csmi = smile
+        elif smile == 'O=BO[B-](=O)O[B-](OB=O)=O':
+            csmi = smile
+        else:
+            csmi = smiToSmile(smile)
+        can.append(csmi)
+    data['can'] = can
+
+    data.to_csv('smi_n.csv',index=False)
+
+def computeFramwork(df):
+    murckos = []
+    carbons = []
+    for smi in df['can']:
+        mol = Chem.MolFromSmiles(smi)
+        core = MurckoScaffold.GetScaffoldForMol(mol)
+        carb = MurckoScaffold.MakeScaffoldGeneric(core)
+        #将Murcko骨架和C骨架转成smile
+        mur = Chem.MolToSmiles(core)
+        carb = Chem.MolToSmiles(carb)
+        murckos.append(mur)
+        carbons.append(carb)
+    df['murckos'] = murckos
+    df['carbons'] = carbons
+    return df
 
 def getsmi():
     data = pd.read_table('bingdingdb_2_2_4.csv',sep=',')

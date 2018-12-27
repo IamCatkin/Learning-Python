@@ -17,7 +17,7 @@ def dataloader():
 
 @retry()
 def jscrawler(c):
-    url = 'https://pubchem.ncbi.nlm.nih.gov/compound/' + c    
+    url = 'https://pubchem.ncbi.nlm.nih.gov/compound/' + str(c)    
     fireFoxOptions = webdriver.FirefoxOptions()
     fireFoxOptions.set_headless()
     browser = webdriver.Firefox(firefox_options=fireFoxOptions)
